@@ -1,21 +1,25 @@
 from typing import Optional, List, Tuple, Iterator
 import time
+import json
+import urllib.parse
+import webbrowser
 
 
 # WifiObservation - XYZ punkts kurā ir pamanīts WIFI AP
-# SSID ir hashmap key, to nav nepieciešams glabāt
 class WifiObservation:
   timestamp: str
   latitude: float
   longitude: float
   macAddress: str
   signalStrength: int
+  ssid: str
   def __init__(self, timestamp: str, latitude: float, longitude: float, macAddress: str, signalStrength: int, ssid: str):
     self.timestamp = timestamp
     self.latitude = latitude
     self.longitude = longitude
     self.macAddress = macAddress
     self.signalStrength = signalStrength
+    self.ssid = ssid
 
 class Node:
   key: str
@@ -49,13 +53,19 @@ class HashTable:
     if node == None:
       self.store[slot] = newNode
       return
-    while node != None and node.next != None:
-      # Ja key eksistē, update value
+
+    prev = node
+    while node != None:
+      # Ja key eksistē un signāls ir stiprāks, update value
+      # Teorētiski labākais veids būtu meklēt wifi avotu apstrādājot vairākus punktus
+      # bet ja ir pietiekami observations vajadzētu pietikt
       if node.key == k:
-        node.value = v
+        if node.value.signalStrength > v.signalStrength:
+          node.value = v
         return
+      prev = node
       node = node.next
-    node.next = newNode
+    prev.next = newNode
 
   def find(self, k: str) -> Optional[WifiObservation]:
     slot = self._keyToIndex(k)
@@ -121,7 +131,7 @@ def importCsv(file_path: str):
       ssid = row['ssid']
 
       observation = WifiObservation(timestamp, latitude, longitude, macAddress, signalStrength, ssid)
-      key = f"{macAddress}:{ssid}"
+      key = macAddress
       wifiTable.insert(key, observation)
 
   print("Datu bāze apstrādāta!")
@@ -143,11 +153,50 @@ def printDb():
 
   print(f"total: {count}")
 
-printDb()
+def displayMap(points: List[WifiObservation]):
+  geojson = {
+    "type": "FeatureCollection",
+    "features": []
+  }
+  # Pievieno katru wifi punktu kā GeoJSON feature lai tie rādas uz kartes
+  for observation in points:
+    feature = {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [observation.longitude, observation.latitude]
+      },
+      "properties": {
+        "mac": observation.macAddress,
+        "ssid": observation.ssid,
+        "signal": observation.signalStrength,
+        "timestamp": observation.timestamp
+      }
+    }
+    geojson["features"].append(feature)
+
+  geojson_str = json.dumps(geojson)
+  # https://stackoverflow.com/a/9345102
+  url = f"http://geojson.io/#data=data:application/json,{urllib.parse.quote(geojson_str)}"
+  webbrowser.open(url)
+
 start = time.time()
 importCsv("wifis.private.csv") # Todo - uztaisīt minimālu neostumbler at tikai RTU apkārtni
 end = time.time()
-printDb()
 print("Importa laiks:", end - start, "s")
 # total: 13829
 # Importa laiks: 0.826019287109375 s
+
+# Parāda pirmos dažus observations lai redzētu vai dati ir pareizi importēti
+def debugWifiStore():
+  count = 5
+  observations: List[WifiObservation] = []
+  for key, observation in wifiTable:
+    if count < 0:
+      break
+    observations.append(observation)
+    print(count)
+    count -= 1
+  displayMap(observations)
+
+debugWifiStore()

@@ -26,7 +26,7 @@ Acc: 10 m
 TODO
  - [ ] CLI funkcijas
  - [ ] Dabūt wifi sarakstu no datora un atrast loc pēc tā
- - [ ] https://geojson.io/ lai skaisti parādītu visus WIFI punktus
+ - [X] https://geojson.io/ lai skaisti parādītu visus WIFI punktus
 
 ---
 
