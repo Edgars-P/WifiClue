@@ -28,6 +28,13 @@ TODO
  - [ ] Dabūt wifi sarakstu no datora un atrast loc pēc tā
  - [X] https://geojson.io/ lai skaisti parādītu visus WIFI punktus
 
+Izmantotās bibliotēkas:
+ - `typing` - Python tipi lai noķertu kļūdas un palīdzētu hintiem
+ - `time` - Vienkāršs benchmark importa un meklēšanas laikiem
+ - `json` - Pārvērš pythion objektu JSON struktūrā lai varētu atvērt karti geojson.io vizualizācijām
+ - `urllib` - URL enkodēšana geojson.io saprotamā formātā
+ - `webbrowser` - Automātiski atver geojson.io lai vizuāli parādītu karti
+
 ---
 
 Noslēguma projekts ir jūsu iespēja izmantot jauniegūtās prasmes, lai izstrādātu pilnvērtīgo programmatūru noteikto uzdevuma risināšanai. Projektā jāizmanto zināšanas, kas ir iegūtas kursa laikā, bet projekta uzdevumu jāģenerē jums pašiem. Mēs gribam, lai Jūs izveidotu sistēmu, kas automatizēs kādu no jūsu ikdienas uzdevumiem.
