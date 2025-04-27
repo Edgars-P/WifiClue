@@ -21,6 +21,17 @@ class WifiObservation:
     self.signalStrength = signalStrength
     self.ssid = ssid
 
+class LocationGuess:
+  latitude: float
+  longitude: float
+  accuracy: float
+  usedAPs: List[WifiObservation]
+  def __init__(self, latitude: float, longitude: float, usedAPs: List[WifiObservation]):
+    self.latitude = latitude
+    self.longitude = longitude
+    self.usedAPs = usedAPs
+
+
 class Node:
   key: str
   value: WifiObservation
@@ -113,6 +124,49 @@ class HashTable:
       return self.__next__()
     # Ja nav currentNode un nav slot, beigas
     raise StopIteration
+
+type PosList =  List[List[float]]
+def locGuessToPoly(loc: LocationGuess) -> PosList:
+  # TODO izveidot apli no LocationGuess X, Y un accuracy
+  return [
+    [
+      24.070821008499877,
+      56.9622676862144
+    ],
+    [
+      24.060788695396667,
+      56.95994178583996
+    ],
+    [
+      24.0602261357825,
+      56.94912827703811
+    ],
+    [
+      24.0775717238582,
+      56.93693055648515
+    ],
+    [
+      24.096370590934953,
+      56.94276141126227
+    ],
+    [
+      24.104152665584053,
+      56.95219625786467
+    ],
+    [
+      24.089432355703906,
+      56.96137312632811
+    ],
+    [
+      24.070821008499877,
+      56.9622676862144
+    ]
+  ]
+
+def makeLocationGuess(observations: List[WifiObservation]) -> LocationGuess:
+  # TODO
+  return LocationGuess(0, 0, [])
+
 
 # Globāls HashTable wifi punktiem
 wifiTable = HashTable(32)
