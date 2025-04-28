@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import time
 import json
 import urllib.parse
@@ -7,6 +7,11 @@ import webbrowser
 from hashtable import HashTable
 from wifi import LocationGuess, WifiObservation
 
+
+def makeLocationGuess(observations: List[WifiObservation]) -> LocationGuess:
+  # TODO pārbaudīt visus observation
+  # No visiem obervation ar zināmiem loc, atrast uztvērēja loc
+  return LocationGuess(0, 0, [])
 
 type PosList =  List[List[float]]
 def locGuessToPoly(loc: LocationGuess) -> PosList:
@@ -46,10 +51,6 @@ def locGuessToPoly(loc: LocationGuess) -> PosList:
     ]
   ]
 
-def makeLocationGuess(observations: List[WifiObservation]) -> LocationGuess:
-  # TODO
-  return LocationGuess(0, 0, [])
-
 
 # Globāls HashTable wifi punktiem
 wifiTable = HashTable(32)
@@ -73,7 +74,7 @@ def importCsv(file_path: str):
 
   print("Datu bāze apstrādāta!")
 
-def displayMap(points: List[WifiObservation]):
+def displayMap(points: List[WifiObservation], guess: Optional[LocationGuess]):
   geojson = {
     "type": "FeatureCollection",
     "features": []
@@ -94,6 +95,11 @@ def displayMap(points: List[WifiObservation]):
       }
     }
     geojson["features"].append(feature)
+
+  if guess:
+    poly = locGuessToPoly(guess)
+    # TODO pievienot guess kā  feature kartei
+    # Vajag gan pašu guess lat/long, gan poly apli
 
   geojson_str = json.dumps(geojson)
   # https://stackoverflow.com/a/9345102
@@ -117,7 +123,7 @@ def debugWifiStore():
     observations.append(observation)
     print(count)
     count -= 1
-  displayMap(observations)
+  displayMap(observations, None)
 
 def cliLoop():
   command = input(">").split(" ")
@@ -129,6 +135,8 @@ def cliLoop():
       print("TODO, ievadīt", count, "AP")
     case ["count"]:
       print("TODO saskaitīt datu bāzē salgabātus AP")
+    case ["debugstore"]:
+      debugWifiStore()
     case _:
       print("Komanta nav atpazīta!")
       print("Atbalstītas komandas: TODO")
