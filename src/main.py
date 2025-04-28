@@ -73,23 +73,6 @@ def importCsv(file_path: str):
 
   print("Datu bāze apstrādāta!")
 
-# Tests - Vai var nolasīt geoclue failu
-
-def printDb():
-  count = 0
-  for key, observation in wifiTable:
-    mac = observation.macAddress
-    # Extract SSID from the key
-    ssid = key
-    lat = observation.latitude
-    lon = observation.longitude
-    signal = observation.signalStrength
-
-    print(f"{count+1}. MAC: {mac} | SSID: {ssid} | Position: ({lat:.6f}, {lon:.6f}) | Signal: {signal} dBm")
-    count += 1
-
-  print(f"total: {count}")
-
 def displayMap(points: List[WifiObservation]):
   geojson = {
     "type": "FeatureCollection",
@@ -136,4 +119,16 @@ def debugWifiStore():
     count -= 1
   displayMap(observations)
 
-debugWifiStore()
+def cliLoop():
+  command = input(">").split(" ")
+
+  match command:
+    case ["locate", "scan"]:
+      print("TODO skanēt netālus AP un no tiem atrast loc")
+    case ["locate", count]:
+      print("TODO, ievadīt", count, "AP")
+    case ["count"]:
+      print("TODO saskaitīt datu bāzē salgabātus AP")
+
+while True:
+  cliLoop()
