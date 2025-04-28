@@ -1,0 +1,39 @@
+# Piemēra AP saraksts no 8-302 zāles, ielīmēt CLI konsolē
+
+```
+locate 34
+FC:7F:F1:CF:DD:21 RTU-Guest
+FC:7F:F1:CF:D3:B1 RTU-Guest
+FC:7F:F1:D0:0F:42 RTU-Guest
+FC:7F:F1:D0:0F:41 3rdFloorAVS
+FC:7F:F1:CF:DD:20 eduroam
+FC:7F:F1:CF:D3:B0 eduroam
+FC:7F:F1:D0:1D:41 RTU-Guest
+FC:7F:F1:CF:DC:F1 3rdFloorAVS
+FC:7F:F1:D0:1D:51 RTU-Guest
+FC:7F:F1:CF:DD:31 RTU-Guest
+FC:7F:F1:CF:DD:30 eduroam
+FC:7F:F1:CF:DC:F0 eduroam
+FC:7F:F1:CF:DC:E0 eduroam
+FC:7F:F1:D0:1D:50 eduroam
+FC:7F:F1:CF:68:F1 RTU-Guest
+FC:7F:F1:CF:68:F0 eduroam
+FC:7F:F1:D0:0F:51 3rdFloorAVS
+FC:7F:F1:D0:0F:50 eduroam
+FC:7F:F1:D0:0F:52 RTU-Guest
+FC:7F:F1:D0:21:A2 RTU-Guest
+FC:7F:F1:D0:21:B1 3rdFloorAVS
+FC:7F:F1:D0:21:B0 eduroam
+FC:7F:F1:D0:21:B2 RTU-Guest
+FC:7F:F1:CF:DC:E1 3rdFloorAVS
+FC:7F:F1:CF:DC:E2 RTU-Guest
+FC:7F:F1:D0:19:41 3rdFloorAVS
+32:E1:A0:47:97:9E nuh uh
+FC:7F:F1:D0:21:A0 eduroam
+FC:7F:F1:D0:19:40 eduroam
+FC:7F:F1:D0:19:43 RTU-Guest
+7A:13:C3:F0:7D:B1 Emīls's A55
+FC:7F:F1:D0:19:51 3rdFloorAVS
+FC:7F:F1:D0:19:50 eduroam
+FC:7F:F1:D0:19:53 RTU-Guest
+```
