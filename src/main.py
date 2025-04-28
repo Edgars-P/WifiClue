@@ -125,10 +125,13 @@ def cliLoop():
   match command:
     case ["locate", "scan"]:
       print("TODO skanēt netālus AP un no tiem atrast loc")
-    case ["locate", count]:
+    case ["locate", count] if count.isdigit():
       print("TODO, ievadīt", count, "AP")
     case ["count"]:
       print("TODO saskaitīt datu bāzē salgabātus AP")
+    case _:
+      print("Komanta nav atpazīta!")
+      print("Atbalstītas komandas: TODO")
 
 while True:
   cliLoop()
