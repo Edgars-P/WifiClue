@@ -1,14 +1,21 @@
 from typing import List
 
+# Dati kurus var iegūt no wifi skanējuma, bez lokācijas datiem
+class MinimalWifiObservation:
+  ssid: str
+  macAddress: str
+  signalStrength: int
+  def __init__(self, macAddress: str, signalStrength: int, ssid: str):
+    self.macAddress = macAddress
+    self.signalStrength = signalStrength
+    self.ssid = ssid
+
 
 # WifiObservation - XYZ punkts kurā ir pamanīts WIFI AP
-class WifiObservation:
+class WifiObservation(MinimalWifiObservation):
   timestamp: str
   latitude: float
   longitude: float
-  macAddress: str
-  signalStrength: int
-  ssid: str
   def __init__(self, timestamp: str, latitude: float, longitude: float, macAddress: str, signalStrength: int, ssid: str):
     self.timestamp = timestamp
     self.latitude = latitude

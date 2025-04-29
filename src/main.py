@@ -5,10 +5,10 @@ import urllib.parse
 import webbrowser
 
 from hashtable import HashTable
-from wifi import LocationGuess, WifiObservation
+from wifi import LocationGuess, MinimalWifiObservation, WifiObservation
 
 
-def makeLocationGuess(observations: List[WifiObservation]) -> LocationGuess:
+def makeLocationGuess(observations: List[MinimalWifiObservation]) -> LocationGuess:
   # TODO pārbaudīt visus observation
   # No visiem obervation ar zināmiem loc, atrast uztvērēja loc
   return LocationGuess(0, 0, [])
