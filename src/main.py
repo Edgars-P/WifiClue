@@ -107,7 +107,7 @@ def displayMap(points: List[WifiObservation], guess: Optional[LocationGuess]):
   webbrowser.open(url)
 
 start = time.time()
-importCsv("wifis.private.csv") # Todo - uztaisīt minimālu neostumbler at tikai RTU apkārtni
+importCsv("wifis.rtu.csv") # Todo - uztaisīt minimālu neostumbler at tikai RTU apkārtni
 end = time.time()
 print("Importa laiks:", end - start, "s")
 # total: 13829
@@ -115,14 +115,16 @@ print("Importa laiks:", end - start, "s")
 
 # Parāda pirmos dažus observations lai redzētu vai dati ir pareizi importēti
 def debugWifiStore():
-  count = 5
+  count = 500
   observations: List[WifiObservation] = []
   for key, observation in wifiTable:
+    count -= 1
     if count < 0:
       break
+    if count % 3 != 0:
+      continue
     observations.append(observation)
     print(count)
-    count -= 1
   displayMap(observations, None)
 
 def cliLoop():
