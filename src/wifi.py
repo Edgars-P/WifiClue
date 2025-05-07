@@ -30,7 +30,8 @@ class LocationGuess:
   longitude: float
   accuracy: float
   usedAPs: List[WifiObservation]
-  def __init__(self, latitude: float, longitude: float, usedAPs: List[WifiObservation]):
+  def __init__(self, latitude: float, longitude: float, accuracy: float, usedAPs: List[WifiObservation]):
     self.latitude = latitude
     self.longitude = longitude
+    self.accuracy = accuracy
     self.usedAPs = usedAPs

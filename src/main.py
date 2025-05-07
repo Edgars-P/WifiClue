@@ -1,3 +1,4 @@
+import math
 from typing import List, Optional
 import time
 import json
@@ -5,51 +6,32 @@ import urllib.parse
 import webbrowser
 
 from hashtable import HashTable
+from scanner import scanAPs
 from wifi import LocationGuess, MinimalWifiObservation, WifiObservation
 
 
 def makeLocationGuess(observations: List[MinimalWifiObservation]) -> LocationGuess:
   # TODO pārbaudīt visus observation
   # No visiem obervation ar zināmiem loc, atrast uztvērēja loc
-  return LocationGuess(0, 0, [])
+  return LocationGuess(0, 0, 5, [])
 
 type PosList =  List[List[float]]
-def locGuessToPoly(loc: LocationGuess) -> PosList:
-  # TODO izveidot apli no LocationGuess X, Y un accuracy
-  return [
-    [
-      24.070821008499877,
-      56.9622676862144
-    ],
-    [
-      24.060788695396667,
-      56.95994178583996
-    ],
-    [
-      24.0602261357825,
-      56.94912827703811
-    ],
-    [
-      24.0775717238582,
-      56.93693055648515
-    ],
-    [
-      24.096370590934953,
-      56.94276141126227
-    ],
-    [
-      24.104152665584053,
-      56.95219625786467
-    ],
-    [
-      24.089432355703906,
-      56.96137312632811
-    ],
-    [
-      24.070821008499877,
-      56.9622676862144
-    ]
-  ]
+def locGuessToPoly(loc: LocationGuess, points: int = 20) -> PosList:
+    R = 6371  #zemes radiuss km
+    lat, lon = loc.latitude, loc.longitude
+    accuracy = loc.accuracy / 1000  #parvers m uz km
+    polygon = []
+    for i in range(points):
+        angle = 2 * math.pi * i / points
+        dlat = accuracy * math.cos(angle) / R
+        dlon = accuracy * math.sin(angle) / (R * math.cos(math.radians(lat)))
+        new_lat = lat + math.degrees(dlat)
+        new_lon = lon + math.degrees(dlon)
+        polygon.append([new_lon, new_lat])
+
+
+    polygon.append(polygon[0])
+    return polygon
 
 
 # Globāls HashTable wifi punktiem
@@ -98,12 +80,33 @@ def displayMap(points: List[WifiObservation], guess: Optional[LocationGuess]):
 
   if guess:
     poly = locGuessToPoly(guess)
-    # TODO pievienot guess kā  feature kartei
-    # Vajag gan pašu guess lat/long, gan poly apli
+    geojson["features"].append({
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [poly],
+        "type": "Polygon"
+      }
+    })
+    geojson["features"].append(    {
+      "type": "Feature",
+      "properties": {
+        "marker-size": "large",
+        "marker-color": "#0f0"
+      },
+      "geometry": {
+        "coordinates": [
+          guess.longitude,
+          guess.latitude
+        ],
+        "type": "Point"
+      }
+    })
 
   geojson_str = json.dumps(geojson)
   # https://stackoverflow.com/a/9345102
   url = f"http://geojson.io/#data=data:application/json,{urllib.parse.quote(geojson_str)}"
+  print(url)
   webbrowser.open(url)
 
 start = time.time()
@@ -132,7 +135,9 @@ def cliLoop():
 
   match command:
     case ["locate", "scan"]:
-      print("TODO skanēt netālus AP un no tiem atrast loc")
+      wifilist = scanAPs()
+      guess = makeLocationGuess(wifilist)
+      displayMap(guess.usedAPs, guess)
     case ["locate", count] if count.isdigit():
       print("TODO, ievadīt", count, "AP")
     case ["count"]:
