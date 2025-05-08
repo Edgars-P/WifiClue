@@ -16,13 +16,15 @@ class WifiObservation(MinimalWifiObservation):
   timestamp: str
   latitude: float
   longitude: float
-  def __init__(self, timestamp: str, latitude: float, longitude: float, macAddress: str, signalStrength: int, ssid: str):
+  radius: float
+  def __init__(self, timestamp: str, latitude: float, longitude: float, macAddress: str, signalStrength: int, ssid: str, radius: float):
     self.timestamp = timestamp
     self.latitude = latitude
     self.longitude = longitude
     self.macAddress = macAddress
     self.signalStrength = signalStrength
     self.ssid = ssid
+    self.radius = radius
 
 # LocationGuess - Punkts kurā gala ierīce visticamāk atrodas
 class LocationGuess:

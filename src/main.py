@@ -11,9 +11,28 @@ from wifi import LocationGuess, MinimalWifiObservation, WifiObservation
 
 
 def makeLocationGuess(observations: List[MinimalWifiObservation]) -> LocationGuess:
-  # TODO pārbaudīt visus observation
-  # No visiem obervation ar zināmiem loc, atrast uztvērēja loc
-  return LocationGuess(0, 0, 5, [])
+  # Svērts vidējais no visiem loc, izmantojot signāla jaudu
+  stren = 0
+  lat = 0
+  lon = 0
+  rad = 0
+  usedAps: List[WifiObservation] = []
+  for ap in observations:
+    fullap = wifiTable.find(ap.macAddress.lower())
+    print(ap.macAddress.lower(), ap.ssid, fullap)
+    if not fullap:
+      continue
+    stren += ap.signalStrength
+    lat += fullap.latitude * ap.signalStrength
+    lon += fullap.longitude * ap.signalStrength
+    rad = max(rad, fullap.radius)
+    usedAps.append(fullap)
+  # print(lat, lon, stren)
+  if not stren:
+    print("Nevarēja noteikt atrašanās vietu!")
+    return LocationGuess(0, 0, 999, [])
+  print("Atrasta atrašanās vieta izmantojot", len(usedAps), "/", len(observations), "wifi punktus")
+  return LocationGuess(lat/stren, lon/stren, 5, usedAps)
 
 type PosList =  List[List[float]]
 def locGuessToPoly(loc: LocationGuess, points: int = 20) -> PosList:
@@ -50,9 +69,30 @@ def importCsv(file_path: str):
       signalStrength = int(row['signalStrength'])
       ssid = row['ssid']
 
-      observation = WifiObservation(timestamp, latitude, longitude, macAddress, signalStrength, ssid)
-      key = macAddress
-      wifiTable.insert(key, observation)
+      ex = wifiTable.find(macAddress)
+
+      if not ex:
+        observation = WifiObservation(timestamp, latitude, longitude, macAddress, signalStrength, ssid, 0)
+        key = macAddress
+        wifiTable.insert(key, observation)
+        continue
+
+      newlat = (latitude+ex.latitude)/2
+      newlong = (longitude+ex.longitude)/2
+      rad = math.sqrt(
+         (latitude - newlat) ** 2
+         + (longitude - newlong) ** 2
+      )
+      #print("rad", rad)
+      observation = WifiObservation(
+        timestamp,
+        (latitude+ex.latitude)/2,
+        (longitude+ex.longitude)/2,
+        macAddress,
+        signalStrength,
+        ssid,
+        max(rad, ex.radius)
+      )
 
   print("Datu bāze apstrādāta!")
 
@@ -73,7 +113,8 @@ def displayMap(points: List[WifiObservation], guess: Optional[LocationGuess]):
         "mac": observation.macAddress,
         "ssid": observation.ssid,
         "signal": observation.signalStrength,
-        "timestamp": observation.timestamp
+        "timestamp": observation.timestamp,
+        "radius": observation.radius
       }
     }
     geojson["features"].append(feature)
@@ -106,7 +147,6 @@ def displayMap(points: List[WifiObservation], guess: Optional[LocationGuess]):
   geojson_str = json.dumps(geojson)
   # https://stackoverflow.com/a/9345102
   url = f"http://geojson.io/#data=data:application/json,{urllib.parse.quote(geojson_str)}"
-  print(url)
   webbrowser.open(url)
 
 start = time.time()
@@ -139,7 +179,16 @@ def cliLoop():
       guess = makeLocationGuess(wifilist)
       displayMap(guess.usedAPs, guess)
     case ["locate", count] if count.isdigit():
-      print("TODO, ievadīt", count, "AP")
+      wifilist: List[MinimalWifiObservation] = []
+      for i in range(int(count)):
+        i = input().split(" ")
+        mac = i[0].lower()
+        ssid = i[1]
+        stren = i[2] or 1
+        wifilist.append(MinimalWifiObservation(mac, int(stren), ssid))
+      guess = makeLocationGuess(wifilist)
+      displayMap(guess.usedAPs, guess)
+
     case ["count"]:
       print("TODO saskaitīt datu bāzē salgabātus AP")
     case ["debugstore"]:

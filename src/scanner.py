@@ -13,7 +13,7 @@ def scanAPs() -> List[MinimalWifiObservation]:
     obs: List[MinimalWifiObservation] = []
     while len(lines):
       ssid = lines.pop(0).replace("SSID:", "")
-      mac_address = lines.pop(0).replace("BSSID:", "")
+      mac_address = lines.pop(0).replace("BSSID:", "").lower()
       signal_str = lines.pop(0).replace("SIGNAL:", "")
       try:
         signal_strength = int(signal_str)
