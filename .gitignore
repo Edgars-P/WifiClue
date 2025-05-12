@@ -1,4 +1,5 @@
 .venv
 formatted.txt
 *.private.csv
+preprocess_wifi.py
 __pycache__

@@ -4,6 +4,7 @@ import time
 import json
 import urllib.parse
 import webbrowser
+import random
 
 from hashtable import HashTable
 from scanner import scanAPs
@@ -15,7 +16,7 @@ def makeLocationGuess(observations: List[MinimalWifiObservation]) -> LocationGue
   stren = 0
   lat = 0
   lon = 0
-  rad = 0
+  rad = 0.0
   usedAps: List[WifiObservation] = []
   for ap in observations:
     fullap = wifiTable.find(ap.macAddress.lower())
@@ -25,33 +26,37 @@ def makeLocationGuess(observations: List[MinimalWifiObservation]) -> LocationGue
     stren += ap.signalStrength
     lat += fullap.latitude * ap.signalStrength
     lon += fullap.longitude * ap.signalStrength
-    rad = max(rad, fullap.radius)
+    # print(rad, fullap.radius)
+    rad = (rad + fullap.radius) / 2
     usedAps.append(fullap)
   # print(lat, lon, stren)
   if not stren:
     print("Nevarēja noteikt atrašanās vietu!")
     return LocationGuess(0, 0, 999, [])
   print("Atrasta atrašanās vieta izmantojot", len(usedAps), "/", len(observations), "wifi punktus")
-  return LocationGuess(lat/stren, lon/stren, 5, usedAps)
+  return LocationGuess(lat/stren, lon/stren, rad, usedAps)
 
 type PosList =  List[List[float]]
-def locGuessToPoly(loc: LocationGuess, points: int = 20) -> PosList:
-    R = 6371  #zemes radiuss km
-    lat, lon = loc.latitude, loc.longitude
-    accuracy = loc.accuracy / 1000  #parvers m uz km
+def locGuessToPoly(loc: LocationGuess | WifiObservation, points: int = 20) -> PosList:
+    radius_deg = 0
+    if isinstance(loc, LocationGuess):
+      radius_deg = loc.accuracy
+    else:
+      radius_deg = loc.radius
+    #print(radius_deg)
     polygon = []
     for i in range(points):
         angle = 2 * math.pi * i / points
-        dlat = accuracy * math.cos(angle) / R
-        dlon = accuracy * math.sin(angle) / (R * math.cos(math.radians(lat)))
-        new_lat = lat + math.degrees(dlat)
-        new_lon = lon + math.degrees(dlon)
+        # * 0.5 Salabo projekciju jo zeme ir zeme
+        # Nestrādās citās valstīs
+        # TODO ja kaut kad komercializēsim :P
+        offsetla = radius_deg * math.cos(angle) * 0.5
+        offsetlo = radius_deg * math.sin(angle)
+        new_lat = loc.latitude + offsetla
+        new_lon = loc.longitude + offsetlo
         polygon.append([new_lon, new_lat])
-
-
-    polygon.append(polygon[0])
+    polygon.append(polygon[0]) # Atkal pirmails lai aizvērtu
     return polygon
-
 
 # Globāls HashTable wifi punktiem
 wifiTable = HashTable(32)
@@ -73,17 +78,16 @@ def importCsv(file_path: str):
 
       if not ex:
         observation = WifiObservation(timestamp, latitude, longitude, macAddress, signalStrength, ssid, 0)
-        key = macAddress
-        wifiTable.insert(key, observation)
+        wifiTable.insert(macAddress, observation)
         continue
 
       newlat = (latitude+ex.latitude)/2
       newlong = (longitude+ex.longitude)/2
       rad = math.sqrt(
-         (latitude - newlat) ** 2
-         + (longitude - newlong) ** 2
+         ((latitude - newlat) * 2) ** 2
+         + ((longitude - newlong) * 2) ** 2
       )
-      #print("rad", rad)
+      # print("rad", rad)
       observation = WifiObservation(
         timestamp,
         (latitude+ex.latitude)/2,
@@ -93,6 +97,7 @@ def importCsv(file_path: str):
         ssid,
         max(rad, ex.radius)
       )
+      wifiTable.insert(macAddress, observation)
 
   print("Datu bāze apstrādāta!")
 
@@ -106,8 +111,14 @@ def displayMap(points: List[WifiObservation], guess: Optional[LocationGuess]):
     feature = {
       "type": "Feature",
       "geometry": {
+        # "type": "Polygon",
+        # "coordinates": [locGuessToPoly(observation, 16)]
         "type": "Point",
-        "coordinates": [observation.longitude, observation.latitude]
+        "coordinates": [
+          # Izkliedē punktus lai vieglāk redzēt kartē
+          observation.longitude + ((random.random() - 0.5) * 0.00001),
+          observation.latitude + ((random.random() - 0.5) * 0.00001)
+        ],
       },
       "properties": {
         "mac": observation.macAddress,
@@ -123,13 +134,16 @@ def displayMap(points: List[WifiObservation], guess: Optional[LocationGuess]):
     poly = locGuessToPoly(guess)
     geojson["features"].append({
       "type": "Feature",
-      "properties": {},
+      "properties": {
+        "stroke": "darkgreen",
+        "fill": "green",
+      },
       "geometry": {
         "coordinates": [poly],
         "type": "Polygon"
       }
     })
-    geojson["features"].append(    {
+    geojson["features"].append({
       "type": "Feature",
       "properties": {
         "marker-size": "large",
@@ -164,7 +178,7 @@ def debugWifiStore():
     count -= 1
     if count < 0:
       break
-    if count % 3 != 0:
+    if count % 5 != 0:
       continue
     observations.append(observation)
     print(count)
