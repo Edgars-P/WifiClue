@@ -37,13 +37,10 @@ class HashTable:
 
     prev = node
     while node != None:
-      # Ja key eksistē un signāls ir stiprāks, update value
-      # Teorētiski labākais veids būtu meklēt wifi avotu apstrādājot vairākus punktus
-      # bet ja ir pietiekami observations vajadzētu pietikt
+      # Ja ir jauns value, izmantot to.
+      # Visi rad aprēķini notiek pirms insert
       if node.key == k:
-        if node.value.signalStrength > v.signalStrength:
-          node.value = v
-        return
+        node.value = v
       prev = node
       node = node.next
     prev.next = newNode
