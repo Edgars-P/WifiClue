@@ -19,7 +19,7 @@ def makeLocationGuess(observations: List[MinimalWifiObservation]) -> LocationGue
   usedAps: List[WifiObservation] = []
   for ap in observations:
     fullap = wifiTable.find(ap.macAddress.lower())
-    print(ap.macAddress.lower(), ap.ssid, fullap)
+    # print(ap.macAddress.lower(), ap.ssid, fullap)
     if not fullap:
       continue
     stren += ap.signalStrength

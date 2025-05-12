@@ -5,6 +5,8 @@ from typing import List
 
 def scanAPs() -> List[MinimalWifiObservation]:
   try:
+    # https://askubuntu.com/a/851253
+    # https://people.freedesktop.org/~lkundrak/nm-docs/nmcli.html
     out = subprocess.check_output(["nmcli", "-t", "-m", "multiline", "-f", "SSID,BSSID,SIGNAL", "dev", "wifi", "list"], encoding="utf-8")
     # SSID:MajasInternets
     # BSSID:5C:E9:31:63:19:97
@@ -20,8 +22,12 @@ def scanAPs() -> List[MinimalWifiObservation]:
         obs.append(MinimalWifiObservation(macAddress=mac_address, signalStrength=signal_strength, ssid=ssid))
       except ValueError:
         pass
+
+    print("locate", len(obs))
+    for o in obs:
+      print(o.macAddress, o.ssid.replace(" ", ""), o.signalStrength)
     return obs
 
   except Exception as e:
-    print("Skenēšana neizdevās!", e)
+    print("Skenēšana neizdevās! Skeneris atbalsta tikai Linux sistēmu ar NetworkManager.", e)
     return []

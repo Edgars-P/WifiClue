@@ -4,29 +4,42 @@ Apstrādā CSV datubāzi eksportētu no NeoStumbler, uztur to optimizētā veid�
 
 Iedot sarakstu ar uztvertiem WiFi AP, programma var atrast uztvērēja ierīces aptuvenu atrašanās vietu.
 
-CSV formāts:
+NeoStumbler CSV formāts:
 ```csv
 timestamp,latitude,longitude,locationAccuracy,altitude,altitudeAccuracy,locationAge,speed,pressure,macAddress,wifiScanAge,signalStrength,ssid
 ```
 
-Piemērs:
+## Piemērs
 
 ```
 Datu bāze apstrādāta!
-> locate 10
->> FC:7F:F1:CF:8B:82  RTU-Guest
->> FC:7F:F1:CF:8B:80  eduroam
->> ...
->> 34:8A:12:6F:F1:F2  RTU-Guest
-Lokācija atrasta!
-Pos: ...
-Acc: 10 m
+Importa laiks: 0.03148651123046875 s
+>locate scan
+locate 57
+fc:7f:f1:d0:1d:42 Robotika2025 70
+fc:7f:f1:d0:1d:40 eduroam 65
+...
+fc:7f:f1:d0:0f:53 Robotika2025 34
+2a:11:a8:8a:d1:53 DIRECT-AbRTU22-P0027msIL 29
+Atrasta atrašanās vieta izmantojot 50 / 57 wifi punktus
+(Atveras pārlūks ar karti)
 ```
 
+## Datu glabāšana
+
+Wifi datubāze tiek glabāta kā hashtable pēc BSSID (MAC adreses). Tas nodrošina ātru pieeju atrast atrašanās vetu saistītu ar wifi no mērijumiem, jo katrs MAC ir unikāls.
+
+Wifi punkti tiek glabāti kā klase WifiObservation. Tā satur visus wifi parametrus, kā arī atrašanās vietu un rādiusu.
+
+Apstrādājot CSV datubāzi programmas sākšanas brīdī, visi wifi punkti tiek ievietoti HashTable. Konfliktu gadījumā tiek izmantota vidējā atrašanās vieta, kā arī tiek palielināts punkta rādiuss līdz tas iekļauj visus punktus.
+
+Veicot skenēšanu vai ar manuālo ievadi iegūtie wifi punkti tiek saglabāti kā `MinimalWifiObservation`. Tā ir virsklase `WifiObservation` kas nosaka tikai wifi parametrus, bet neiekļauj lokāciju jo tā nav zināma.
+
 TODO
- - [ ] CLI funkcijas
- - [ ] Dabūt wifi sarakstu no datora un atrast loc pēc tā
+ - [X] CLI funkcijas
+ - [X] Dabūt wifi sarakstu no datora un atrast loc pēc tā
  - [X] https://geojson.io/ lai skaisti parādītu visus WIFI punktus
+ - [ ] Izveidot labu RTU karti un piemēra mērijumu no tās pašas dienas.
 
 Izmantotās bibliotēkas:
  - `typing` - Python tipi lai noķertu kļūdas un palīdzētu hintiem
