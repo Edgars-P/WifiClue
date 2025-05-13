@@ -1,5 +1,5 @@
 
-> Uzmanību: Eduroam un RTU-Guest MAC adreses mainās aptuveni reizi dienā. Ja CSV un mērijums ir no dažādām dienām, `> locate scan` visdrīzāk neizdosies.
+> Uzmanību: Eduroam un RTU-Guest MAC adreses mainās aptuveni reizi nedēļā kad AP tiek restartēti. Ja CSV un mērijums ir no dažādām dienām, `> locate scan` visdrīzāk neizdosies.
 > Visi piemēri ir no tās pašas dienas:
 
 
