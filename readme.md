@@ -1,3 +1,8 @@
+<center>
+ 
+ ![image](https://github.com/user-attachments/assets/a81925ea-0bb9-42c1-9b2b-c5ace954375b)
+</center>
+
 # WifiClue - RTU projekts
 
 Apstrādā CSV datubāzi eksportētu no NeoStumbler, uztur to optimizētā veidā atmiņā.
