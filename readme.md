@@ -1,18 +1,39 @@
 <center>
- 
+
  ![image](https://github.com/user-attachments/assets/a81925ea-0bb9-42c1-9b2b-c5ace954375b)
 </center>
 
 # WifiClue - RTU projekts
 
-Apstrādā CSV datubāzi eksportētu no NeoStumbler, uztur to optimizētā veidā atmiņā.
+Precīza atrašanās vieta ir svarīga modernās dzīves sastāvdaļa. No Google Maps līdz soļu skaitītājam vai pat pulkstenim, precīzi zināmu atrašanās vietu izmanto modernas ierīces daudzos veidos. Bet kā var laptops vai pat stacionārs dators, bez jebkādas GPS funkcijas zināt kur tas atrodas?
 
-Iedot sarakstu ar uztvertiem WiFi AP, programma var atrast uztvērēja ierīces aptuvenu atrašanās vietu.
+Atbilde ir uztvert ko var redzēt - WiFi. Gandrīz visiem stacionārajiem un pilnīgi visiem laptopiem ir WiFi uztvērējs. Katrs WiFi var strādāt gandrīz kā satelīts - raidot savu MAC identifikatoru un attālumu no ierīces. Skolas vidē kā piemēram RTU tas ir vēl labāk, jo šie wifi punkti ir visos ēkas stūros kā `eduroam` tīkls:
 
-NeoStumbler CSV formāts:
-```csv
-timestamp,latitude,longitude,locationAccuracy,altitude,altitudeAccuracy,locationAge,speed,pressure,macAddress,wifiScanAge,signalStrength,ssid
 ```
+> nmcli dev wifi list | grep eduroam
+        FC:7F:F1:D0:1D:40  eduroam            Infra  11    130 Mbit/s  69      ▂▄▆_  WPA2 802.1X
+        FC:7F:F1:CF:DD:20  eduroam            Infra  6     130 Mbit/s  59      ▂▄▆_  WPA2 802.1X
+        FC:7F:F1:CF:D3:B0  eduroam            Infra  108   540 Mbit/s  58      ▂▄▆_  WPA2 802.1X
+        FC:7F:F1:D0:21:B0  eduroam            Infra  36    540 Mbit/s  57      ▂▄▆_  WPA2 802.1X
+        FC:7F:F1:CF:DD:30  eduroam            Infra  44    540 Mbit/s  57      ▂▄▆_  WPA2 802.1X
+        FC:7F:F1:D0:1D:50  eduroam            Infra  116   540 Mbit/s  57      ▂▄▆_  WPA2 802.1X
+        FC:7F:F1:D0:0F:40  eduroam            Infra  1     130 Mbit/s  54      ▂▄__  WPA2 802.1X
+        FC:7F:F1:CF:68:F0  eduroam            Infra  100   540 Mbit/s  50      ▂▄__  WPA2 802.1X
+        FC:7F:F1:D0:19:40  eduroam            Infra  11    130 Mbit/s  49      ▂▄__  WPA2 802.1X
+        FC:7F:F1:CF:DC:F0  eduroam            Infra  124   540 Mbit/s  49      ▂▄__  WPA2 802.1X
+        FC:7F:F1:D0:21:A0  eduroam            Infra  1     130 Mbit/s  40      ▂▄__  WPA2 802.1X
+        FC:7F:F1:D0:0F:50  eduroam            Infra  52    540 Mbit/s  40      ▂▄__  WPA2 802.1X
+        FC:7F:F1:D0:19:50  eduroam            Infra  60    540 Mbit/s  39      ▂▄__  WPA2 802.1X
+```
+
+Viss kas pietrūkst ir zināt katra punkta aptuveno atrašanās vietu! Projekti kā https://beacondb.net/ apsola šo datubāzi padarīt publisku, bet pagaidām tā vēl nav.
+Šī projekta ietvaros mēs apkopojām mazu datubāzi, [wifis.rtu.csv](https://github.com/Edgars-P/WifiClue/blob/main/wifis.rtu.csv), izmantojot https://github.com/mjaakko/NeoStumbler RTU DITEF ēkas ietvaros.
+
+[TODO bilde]
+
+Datubāze tiek apstrādāta programmas sākumā un glabāta atmiņā kā HashTable. Veicot mērījumu no klienta, tiek izmantota izmērītā atrašanās vieta un uztvērēja signāla stiprums lai atrastu uztvērēja aptuvenu atrašanās vietu.
+
+Rezultāts tiek parādīts pārlūka logā izmantojot automatizācijas bibliotēku lai aizpildītu https://geojson.io karti.
 
 ## Piemērs
 
@@ -20,12 +41,6 @@ timestamp,latitude,longitude,locationAccuracy,altitude,altitudeAccuracy,location
 Datu bāze apstrādāta!
 Importa laiks: 0.03148651123046875 s
 >locate scan
-locate 57
-fc:7f:f1:d0:1d:42 Robotika2025 70
-fc:7f:f1:d0:1d:40 eduroam 65
-...
-fc:7f:f1:d0:0f:53 Robotika2025 34
-2a:11:a8:8a:d1:53 DIRECT-AbRTU22-P0027msIL 29
 Atrasta atrašanās vieta izmantojot 50 / 57 wifi punktus
 (Atveras pārlūks ar karti)
 ```
@@ -44,7 +59,8 @@ TODO
  - [X] CLI funkcijas
  - [X] Dabūt wifi sarakstu no datora un atrast loc pēc tā
  - [X] https://geojson.io/ lai skaisti parādītu visus WIFI punktus
- - [ ] Izveidot labu RTU karti un piemēra mērijumu no tās pašas dienas.
+ - [X] Izveidot labu RTU karti un piemēra mērijumu no tās pašas dienas.
+ - [ ] Izmantot pārlūka automatizāciju lai aizpildītu karti
 
 Izmantotās bibliotēkas:
  - `typing` - Python tipi lai noķertu kļūdas un palīdzētu hintiem
