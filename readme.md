@@ -29,7 +29,7 @@ Atbilde ir uztvert ko var redzēt - WiFi. Gandrīz visiem stacionārajiem un pil
 Viss kas pietrūkst ir zināt katra punkta aptuveno atrašanās vietu! Projekti kā https://beacondb.net/ apsola šo datubāzi padarīt publisku, bet pagaidām tā vēl nav.
 Šī projekta ietvaros mēs apkopojām mazu datubāzi, [wifis.rtu.csv](https://github.com/Edgars-P/WifiClue/blob/main/wifis.rtu.csv), izmantojot https://github.com/mjaakko/NeoStumbler RTU DITEF ēkas ietvaros.
 
-[TODO bilde]
+![image](https://github.com/user-attachments/assets/546505b2-314a-473b-8920-cc0ca19683f7)
 
 Datubāze tiek apstrādāta programmas sākumā un glabāta atmiņā kā HashTable. Veicot mērījumu no klienta, tiek izmantota izmērītā atrašanās vieta un uztvērēja signāla stiprums lai atrastu uztvērēja aptuvenu atrašanās vietu.
 
