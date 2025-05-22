@@ -38,11 +38,25 @@ Rezultāts tiek parādīts pārlūka logā izmantojot automatizācijas bibliotē
 ## Piemērs
 
 ```
+>  python src/main.py
 Datu bāze apstrādāta!
 Importa laiks: 0.03148651123046875 s
 >locate scan
 Atrasta atrašanās vieta izmantojot 50 / 57 wifi punktus
 (Atveras pārlūks ar karti)
+```
+
+Izmantojot sarakstu no [example_ap_list.md](example_ap_list.md):
+
+```
+>  python src/main.py
+Datu bāze apstrādāta!
+Importa laiks: 0.027357101440429688 s
+>locate 46
+34:8a:12:6d:de:c2 RTU-Guest 82
+...
+34:8a:12:6f:2f:13 Karels 15
+Atrasta atrašanās vieta izmantojot 44 / 46 wifi punktus
 ```
 
 ## Datu glabāšana
