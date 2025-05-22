@@ -5,6 +5,10 @@
 
 # WifiClue - RTU projekts
 
+Autori:
+- Edgars Polis 241RDB296
+- Kristaps Bitens 241RDB002
+
 Precīza atrašanās vieta ir svarīga gan automatizāciju, gan modernās dzīves sastāvdaļa. No Google Maps līdz soļu skaitītājam vai pat pulkstenim, precīzi zināmu atrašanās vietu izmanto modernas ierīces daudzos veidos. Bet kā var laptops vai pat stacionārs dators, bez jebkādas GPS funkcijas zināt kur tas atrodas?
 
 Atbilde ir uztvert ko var redzēt - WiFi. Gandrīz visiem stacionārajiem un pilnīgi visiem laptopiem ir WiFi uztvērējs. Katrs WiFi var strādāt gandrīz kā satelīts - raidot savu MAC identifikatoru un attālumu no ierīces. Skolas vidē kā piemēram RTU tas ir vēl labāk, jo šie wifi punkti ir visos ēkas stūros kā `eduroam` tīkls:
