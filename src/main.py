@@ -185,7 +185,10 @@ def debugWifiStore():
   displayMap(observations, None)
 
 def cliLoop():
-  command = input(">").split(" ")
+  try:
+    command = input(">").split(" ")
+  except:
+    exit()
 
   match command:
     case ["locate", "scan"]:
@@ -203,13 +206,13 @@ def cliLoop():
       guess = makeLocationGuess(wifilist)
       displayMap(guess.usedAPs, guess)
 
-    case ["count"]:
-      print("TODO saskaitīt datu bāzē salgabātus AP")
-    case ["debugstore"]:
+    # case ["count"]:
+    #   print("TODO saskaitīt datu bāzē salgabātus AP")
+    case ["dump"]:
       debugWifiStore()
     case _:
       print("Komanta nav atpazīta!")
-      print("Atbalstītas komandas: TODO")
+      print("Atbalstītas komandas:\n locate scan\n locate (n)\n dump")
 
 while True:
   cliLoop()
