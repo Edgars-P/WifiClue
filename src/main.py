@@ -214,5 +214,7 @@ def cliLoop():
       print("Komanta nav atpazīta!")
       print("Atbalstītas komandas:\n locate scan\n locate (n)\n dump")
 
+print("Laipni lūgti WifiClue programmā!")
+print("Lūdzu ievadiet komantu vai ielīmējiet sarkastu no https://github.com/Edgars-P/WifiClue/blob/main/example_ap_list.md")
 while True:
   cliLoop()
