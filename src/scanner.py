@@ -30,4 +30,5 @@ def scanAPs() -> List[MinimalWifiObservation]:
 
   except Exception as e:
     print("Skenēšana neizdevās! Skeneris atbalsta tikai Linux sistēmu ar NetworkManager.", e)
+    print("Ir iespējams izmantot sagatavotu sarkastu: https://github.com/Edgars-P/WifiClue/blob/main/example_ap_list.md")
     return []
